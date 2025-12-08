@@ -1,0 +1,174 @@
+{
+  "common": {
+    "minutes": "minutes",
+    "points": "points",
+    "close": "Fermer",
+    "current": "Actuel",
+    "completed": "Terminé",
+    "upcoming": "À venir",
+    "difficulty": "Difficulté",
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "advanced": "Avancé",
+    "high": "Élevé",
+    "low": "Faible"
+  },
+  "nav": {
+    "aiStudyTools": "Outils d'étude IA",
+    "myFeedback": "Mes commentaires",
+    "contentCreator": "Créateur de contenu",
+    "aiLessonPlanner": "Planificateur de leçons IA",
+    "userManagement": "Gestion des utilisateurs",
+    "ragTest": "Test RAG"
+  },
+  "dashboard": {
+    "student": {
+      "readyToContinue": "Prêt à continuer votre parcours STEM?",
+      "myProgress": "Ma progression",
+      "quizzesCompleted": "Quiz complétés",
+      "fromLastWeek": "+2 depuis la semaine dernière",
+      "studySheets": "Fiches d'étude",
+      "viewedThisMonth": "Vues ce mois-ci",
+      "flashcardsUsed": "Cartes mémoire utilisées",
+      "thisWeek": "+23 cette semaine",
+      "overallProgress": "Progression globale",
+      "personalizedLearningPath": "Parcours d'apprentissage personnalisé",
+      "recommendedTopics": "Vos sujets recommandés basés sur votre progression et performance",
+      "studyMaterialsLibrary": "Bibliothèque de matériel d'étude",
+      "accessMaterials": "Accédez à vos fiches d'étude, cartes mémoire et quiz",
+      "lastAccessed": "Dernier accès : {{time}}",
+      "opening": "Ouverture {{type}} : {{title}}",
+      "startStudying": "Commencer à étudier",
+      "difficultyLabel": "Difficulté : {{difficulty}}",
+      "topicCompletedTitle": "Sujet terminé !",
+      "topicCompletedMsg": "Vous avez terminé ce sujet avec succès. Consultez les matériaux ci-dessous.",
+      "reviewMaterials": "Revoir les matériaux",
+      "currentTopicTitle": "Sujet actuel",
+      "currentTopicMsg": "Continuez à travailler sur ce sujet pour progresser dans votre parcours d'apprentissage.",
+      "continueLearning": "Continuer l'apprentissage",
+      "upcomingTopicTitle": "Sujet à venir",
+      "upcomingTopicMsg": "Terminez votre sujet actuel pour débloquer ce module d'apprentissage."
+    },
+    "teacher": {
+      "monitorProgress": "Surveillez la progression et l'engagement de vos étudiants",
+      "totalStudents": "Total des étudiants",
+      "activeThisWeek": "{{count}} actifs cette semaine",
+      "averageScore": "Score moyen",
+      "fromLastMonth": "+2,3% par rapport au mois dernier",
+      "completionRate": "Taux d'achèvement",
+      "engagement": "Engagement",
+      "aboveAverageActivity": "Activité supérieure à la moyenne"
+    }
+  },
+  "admin": {
+    "title": "Tableau de bord admin",
+    "systemOverview": "Aperçu du système et contrôles d'administration",
+    "superAdmin": "Super administrateur",
+    "totalUsers": "Total des utilisateurs",
+    "activeUsers": "{{count}} utilisateurs actifs",
+    "dailyQueries": "Requêtes quotidiennes",
+    "fromYesterday": "+15% par rapport à hier",
+    "documentsProcessed": "Documents traités"
+  },
+  "aiChat": {
+    "title": "Assistant d'étude IA",
+    "subtitle": "Obtenez des réponses intelligentes sur vos matériaux de cours",
+    "selectChapterOptional": "Sélectionner un chapitre (optionnel)",
+    "selectChapterDescription": "Choisissez un chapitre pour obtenir des réponses plus précises et pertinentes",
+    "subjectLabel": "Matière",
+    "selectSubjectPlaceholder": "Sélectionner une matière",
+    "chapterLabel": "Chapitre",
+    "selectChapterPlaceholder": "Sélectionner un chapitre",
+    "selectSubjectFirst": "Sélectionnez d'abord une matière",
+    "assistantCapabilities": "Que peut faire l'assistant IA ?",
+    "capability1": "Répondre aux questions sur les matériaux de cours en utilisant une récupération intelligente en plusieurs étapes",
+    "capability2": "Fournir un raisonnement étape par étape pour vous aider à mieux comprendre les concepts",
+    "capability3": "Effectuer des calculs (comme la loi d'Ohm) et montrer le travail",
+    "capability4": "Citer des sources de vos matériaux téléchargés afin que vous puissiez vérifier les informations",
+    "capability5": "Mémoriser le contexte de la conversation pour les questions de suivi"
+  },
+  "assignments": {
+    "createTitle": "Créer un devoir",
+    "createDescription": "Créer un nouveau devoir pour vos étudiants",
+    "assignmentDetailsTitle": "Détails du devoir",
+    "assignmentDetailsDescription": "Remplissez les informations sur votre devoir",
+    "generateWithAI": "Générer avec l'IA",
+    "assignmentGenerated": "Devoir généré ! Vous pouvez modifier le contenu avant d'enregistrer.",
+    "failedToGenerateAssignment": "Échec de la génération du devoir"
+  },
+  "quiz": {
+    "noQuizzesAvailable": "Aucun quiz disponible pour ce chapitre",
+    "failedToLoad": "Échec du chargement du quiz",
+    "timesUp": "Temps écoulé ! Soumission de votre quiz...",
+    "results": {
+      "loadingResults": "Chargement des résultats...",
+      "noResults": "Aucun résultat disponible",
+      "outstanding": "Exceptionnel ! 🌟",
+      "excellentWork": "Excellent travail ! 🎉",
+      "goodJob": "Bon travail ! 👍",
+      "keepPracticing": "Continuez à pratiquer ! 💪",
+      "needMorePractice": "Besoin de plus de pratique 📚"
+    }
+  },
+  "flashcards": {
+    "noFlashcardsDue": "Aucune carte mémoire à réviser !",
+    "noFlashcardsFound": "Aucune carte mémoire trouvée pour ce chapitre. Générez-en d'abord !",
+    "failedToLoad": "Échec du chargement des cartes mémoire",
+    "greatJob": "Excellent travail !",
+    "keepPracticing": "Continuez à pratiquer !",
+    "sessionComplete": "Session d'étude terminée ! 🎉",
+    "loadingSession": "Chargement de votre session d'étude..."
+  },
+  "progress": {
+    "bloomTaxonomy": {
+      "remember": "Se souvenir",
+      "understand": "Comprendre",
+      "apply": "Appliquer",
+      "analyze": "Analyser",
+      "evaluate": "Évaluer",
+      "create": "Créer"
+    },
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "mastery": {
+      "expert": "Expert",
+      "proficient": "Compétent",
+      "developing": "En développement",
+      "beginner": "Débutant"
+    },
+    "overallAverage": "Moyenne globale",
+    "chaptersStarted": "Chapitres commencés",
+    "questionsAnswered": "Questions répondues",
+    "loadingProgress": "Chargement de votre progression...",
+    "failedToLoad": "Échec du chargement des données de progression"
+  },
+  "analytics": {
+    "failedToLoad": "Échec du chargement des analyses",
+    "failedToLoadChapter": "Échec du chargement des analyses du chapitre",
+    "selectChapterFirst": "Veuillez d'abord sélectionner un chapitre",
+    "individualFeedbackGenerated": "Commentaires individuels générés avec succès !",
+    "failedToGenerateFeedback": "Échec de la génération des commentaires"
+  },
+  "validation": {
+    "emailRequired": "L'e-mail est requis",
+    "validEmail": "Veuillez entrer une adresse e-mail valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 3 caractères",
+    "fillAllRequired": "Veuillez remplir tous les champs obligatoires",
+    "selectChapterFirst": "Veuillez d'abord sélectionner un chapitre"
+  },
+  "messages": {
+    "loggedInAs": "Connecté en tant que {{type}} !",
+    "quickLoginFailed": "Échec de la connexion rapide",
+    "failedToLoadSubjects": "Échec du chargement des matières",
+    "loading": "Chargement...",
+    "noDataAvailable": "Aucune donnée disponible"
+  },
+  "login": {
+    "tagline": "Votre assistant d'apprentissage alimenté par l'IA",
+    "features": "✨ Outils d'étude IA • 📊 Suivi de progression • 🤖 Apprentissage personnalisé"
+  }
+}

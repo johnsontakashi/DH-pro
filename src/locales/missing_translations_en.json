@@ -1,0 +1,174 @@
+{
+  "common": {
+    "minutes": "minutes",
+    "points": "points",
+    "close": "Close",
+    "current": "Current",
+    "completed": "Completed",
+    "upcoming": "Upcoming",
+    "difficulty": "Difficulty",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "high": "High",
+    "low": "Low"
+  },
+  "nav": {
+    "aiStudyTools": "AI Study Tools",
+    "myFeedback": "My Feedback",
+    "contentCreator": "Content Creator",
+    "aiLessonPlanner": "AI Lesson Planner",
+    "userManagement": "User Management",
+    "ragTest": "RAG Test"
+  },
+  "dashboard": {
+    "student": {
+      "readyToContinue": "Ready to continue your STEM journey?",
+      "myProgress": "My Progress",
+      "quizzesCompleted": "Quizzes Completed",
+      "fromLastWeek": "+2 from last week",
+      "studySheets": "Study Sheets",
+      "viewedThisMonth": "Viewed this month",
+      "flashcardsUsed": "Flashcards Used",
+      "thisWeek": "+23 this week",
+      "overallProgress": "Overall Progress",
+      "personalizedLearningPath": "Personalized Learning Path",
+      "recommendedTopics": "Your recommended topics based on your progress and performance",
+      "studyMaterialsLibrary": "Study Materials Library",
+      "accessMaterials": "Access your study sheets, flashcards, and quizzes",
+      "lastAccessed": "Last accessed: {{time}}",
+      "opening": "Opening {{type}}: {{title}}",
+      "startStudying": "Start Studying",
+      "difficultyLabel": "Difficulty: {{difficulty}}",
+      "topicCompletedTitle": "Topic Completed!",
+      "topicCompletedMsg": "You have successfully completed this topic. Review materials below.",
+      "reviewMaterials": "Review Materials",
+      "currentTopicTitle": "Current Topic",
+      "currentTopicMsg": "Continue working on this topic to advance your learning path.",
+      "continueLearning": "Continue Learning",
+      "upcomingTopicTitle": "Upcoming Topic",
+      "upcomingTopicMsg": "Complete your current topic to unlock this learning module."
+    },
+    "teacher": {
+      "monitorProgress": "Monitor your students' progress and engagement",
+      "totalStudents": "Total Students",
+      "activeThisWeek": "{{count}} active this week",
+      "averageScore": "Average Score",
+      "fromLastMonth": "+2.3% from last month",
+      "completionRate": "Completion Rate",
+      "engagement": "Engagement",
+      "aboveAverageActivity": "Above average activity"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "systemOverview": "System overview and administration controls",
+    "superAdmin": "Super Admin",
+    "totalUsers": "Total Users",
+    "activeUsers": "{{count}} active users",
+    "dailyQueries": "Daily Queries",
+    "fromYesterday": "+15% from yesterday",
+    "documentsProcessed": "Documents Processed"
+  },
+  "aiChat": {
+    "title": "AI Study Assistant",
+    "subtitle": "Get intelligent answers about your course materials",
+    "selectChapterOptional": "Select Chapter (Optional)",
+    "selectChapterDescription": "Choose a chapter to get more accurate and relevant answers",
+    "subjectLabel": "Subject",
+    "selectSubjectPlaceholder": "Select a subject",
+    "chapterLabel": "Chapter",
+    "selectChapterPlaceholder": "Select a chapter",
+    "selectSubjectFirst": "Select subject first",
+    "assistantCapabilities": "What can the AI Assistant do?",
+    "capability1": "Answer questions about course materials using intelligent multi-step retrieval",
+    "capability2": "Provide step-by-step reasoning to help you understand concepts better",
+    "capability3": "Perform calculations (like Ohm's Law) and show the working",
+    "capability4": "Cite sources from your uploaded materials so you can verify information",
+    "capability5": "Remember conversation context for follow-up questions"
+  },
+  "assignments": {
+    "createTitle": "Create Assignment",
+    "createDescription": "Create a new assignment for your students",
+    "assignmentDetailsTitle": "Assignment Details",
+    "assignmentDetailsDescription": "Fill in the information about your assignment",
+    "generateWithAI": "Generate with AI",
+    "assignmentGenerated": "Assignment generated! You can edit the content before saving.",
+    "failedToGenerateAssignment": "Failed to generate assignment"
+  },
+  "quiz": {
+    "noQuizzesAvailable": "No quizzes available for this chapter",
+    "failedToLoad": "Failed to load quiz",
+    "timesUp": "Time's up! Submitting your quiz...",
+    "results": {
+      "loadingResults": "Loading results...",
+      "noResults": "No results available",
+      "outstanding": "Outstanding! 🌟",
+      "excellentWork": "Excellent work! 🎉",
+      "goodJob": "Good job! 👍",
+      "keepPracticing": "Keep practicing! 💪",
+      "needMorePractice": "Need more practice 📚"
+    }
+  },
+  "flashcards": {
+    "noFlashcardsDue": "No flashcards due for review!",
+    "noFlashcardsFound": "No flashcards found for this chapter. Generate some first!",
+    "failedToLoad": "Failed to load flashcards",
+    "greatJob": "Great job!",
+    "keepPracticing": "Keep practicing!",
+    "sessionComplete": "Study session complete! 🎉",
+    "loadingSession": "Loading your study session..."
+  },
+  "progress": {
+    "bloomTaxonomy": {
+      "remember": "Remember",
+      "understand": "Understand",
+      "apply": "Apply",
+      "analyze": "Analyze",
+      "evaluate": "Evaluate",
+      "create": "Create"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "mastery": {
+      "expert": "Expert",
+      "proficient": "Proficient",
+      "developing": "Developing",
+      "beginner": "Beginner"
+    },
+    "overallAverage": "Overall Average",
+    "chaptersStarted": "Chapters Started",
+    "questionsAnswered": "Questions Answered",
+    "loadingProgress": "Loading your progress...",
+    "failedToLoad": "Failed to load progress data"
+  },
+  "analytics": {
+    "failedToLoad": "Failed to load analytics",
+    "failedToLoadChapter": "Failed to load chapter analytics",
+    "selectChapterFirst": "Please select a chapter first",
+    "individualFeedbackGenerated": "Individual feedback generated successfully!",
+    "failedToGenerateFeedback": "Failed to generate feedback"
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "validEmail": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 3 characters",
+    "fillAllRequired": "Please fill in all required fields",
+    "selectChapterFirst": "Please select a chapter first"
+  },
+  "messages": {
+    "loggedInAs": "Logged in as {{type}}!",
+    "quickLoginFailed": "Quick login failed",
+    "failedToLoadSubjects": "Failed to load subjects",
+    "loading": "Loading...",
+    "noDataAvailable": "No data available"
+  },
+  "login": {
+    "tagline": "Your AI-Powered Learning Assistant",
+    "features": "✨ AI-powered study tools • 📊 Progress tracking • 🤖 Personalized learning"
+  }
+}

@@ -74,6 +74,8 @@ const StudentDashboard = () => {
   const [selectedTopic, setSelectedTopic] = useState<LearningTopic | null>(null);
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showAllChapters, setShowAllChapters] = useState(false);
+  const [chaptersToShow, setChaptersToShow] = useState(6);
   const [progressData, setProgressData] = useState<DashboardStats>({
     quizzes_completed: 0,
     total_quizzes_available: 0,
@@ -225,7 +227,7 @@ const StudentDashboard = () => {
             </p>
           ) : (
             <div className="space-y-3">
-              {learningPath.slice(0, 5).map((item) => (
+              {learningPath.slice(0, showAllChapters ? learningPath.length : chaptersToShow).map((item) => (
                 <div
                   key={item.id}
                   className={`flex items-center justify-between p-3 rounded-lg border transition-colors cursor-pointer ${
@@ -274,14 +276,39 @@ const StudentDashboard = () => {
                   )}
                 </div>
               ))}
-              {learningPath.length > 5 && (
-                <Button
-                  variant="outline"
-                  className="w-full mt-2"
-                  onClick={() => navigate('/subjects')}
-                >
-                  {t('dashboard.student.viewAllChapters') || 'View All Chapters'} ({learningPath.length})
-                </Button>
+              {learningPath.length > chaptersToShow && !showAllChapters && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setChaptersToShow(prev => Math.min(prev + 6, learningPath.length))}
+                  >
+                    {t('dashboard.student.loadMore') || 'Load More'} (+{Math.min(6, learningPath.length - chaptersToShow)})
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowAllChapters(true)}
+                  >
+                    {t('dashboard.student.showAllChapters') || 'Show All'} ({learningPath.length - chaptersToShow} more)
+                  </Button>
+                </div>
+              )}
+              {showAllChapters && learningPath.length > chaptersToShow && (
+                <div className="space-y-2 mt-4">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowAllChapters(false)}
+                  >
+                    {t('dashboard.student.showLess') || 'Show Less'}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => navigate('/subjects')}
+                  >
+                    {t('dashboard.student.viewInSubjects') || 'View in Subjects Page'}
+                  </Button>
+                </div>
               )}
             </div>
           )}

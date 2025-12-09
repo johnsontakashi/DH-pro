@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Book, Lightbulb, Users, Brain, CheckCircle, UserPlus, Clock, BarChart3, Lock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Book, Lightbulb, Users, Brain, CheckCircle, UserPlus, Clock, BarChart3, Lock, Edit, Save, X } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubjects, Subject, Chapter } from '@/hooks/useSubjects';
+import { useSubjects, useUpdateSubject, Subject, Chapter } from '@/hooks/useSubjects';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 
@@ -38,11 +40,15 @@ export default function Subjects() {
   const [enrolledCourses, setEnrolledCourses] = useState<Set<number>>(new Set());
   const [enrollingCourses, setEnrollingCourses] = useState<Set<number>>(new Set());
   const [completedChapters, setCompletedChapters] = useState<Set<number>>(new Set());
+  const [editingSubject, setEditingSubject] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
   // Use cached query - instant load on subsequent visits
   const { data, isLoading, error } = useSubjects();
+  const updateSubjectMutation = useUpdateSubject();
 
   // Fetch user's enrollments and chapter completion status
   useEffect(() => {
@@ -147,6 +153,45 @@ export default function Subjects() {
     navigate(`/quiz/${chapterId}`);
   };
 
+  const startEditingSubject = (subject: Subject) => {
+    setEditingSubject(subject.id);
+    setEditName(subject.name);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveSubjectName = async () => {
+    if (!editingSubject || !editName.trim()) {
+      toast.error('Subject name cannot be empty');
+      return;
+    }
+
+    if (editName.trim().length < 3) {
+      toast.error('Subject name must be at least 3 characters');
+      return;
+    }
+
+    try {
+      await updateSubjectMutation.mutateAsync({
+        subjectId: editingSubject,
+        name: editName.trim()
+      });
+      
+      toast.success('Subject name updated successfully');
+      setIsEditDialogOpen(false);
+      setEditingSubject(null);
+      setEditName('');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Failed to update subject name';
+      toast.error(errorMessage);
+    }
+  };
+
+  const cancelEditing = () => {
+    setIsEditDialogOpen(false);
+    setEditingSubject(null);
+    setEditName('');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -229,6 +274,66 @@ export default function Subjects() {
                               <Badge variant="outline" className="mt-1">{subject.code}</Badge>
                             </div>
                           </div>
+                          {(user?.role === 'admin' || user?.role === 'teacher') && (
+                            <Dialog open={isEditDialogOpen && editingSubject === subject.id} onOpenChange={(open) => {
+                              if (!open) cancelEditing();
+                            }}>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => startEditingSubject(subject)}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Subject Name</DialogTitle>
+                                  <DialogDescription>
+                                    Change the subject name. Example: "Circuit Theory" instead of "Circuit Analysis 101"
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="py-4">
+                                  <Input
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    placeholder="Enter subject name"
+                                    className="w-full"
+                                    maxLength={100}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        handleSaveSubjectName();
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={cancelEditing}>
+                                    <X className="h-4 w-4 mr-2" />
+                                    Cancel
+                                  </Button>
+                                  <Button 
+                                    onClick={handleSaveSubjectName}
+                                    disabled={updateSubjectMutation.isPending}
+                                  >
+                                    {updateSubjectMutation.isPending ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Saving...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        Save
+                                      </>
+                                    )}
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          )}
                         </div>
                         <CardDescription className="mt-2">{subject.description}</CardDescription>
                       </CardHeader>

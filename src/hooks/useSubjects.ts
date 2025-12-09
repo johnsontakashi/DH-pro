@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 
 export interface Chapter {
@@ -67,4 +67,22 @@ export const useSubjectsByCategory = (category: string) => {
     error,
     total: filteredSubjects.length,
   };
+};
+
+/**
+ * Custom hook to update subject name
+ */
+export const useUpdateSubject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ subjectId, name }: { subjectId: number; name: string }) => {
+      const response = await api.put(`/subjects/${subjectId}`, { name });
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate subjects query to refresh the cache
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+    },
+  });
 };

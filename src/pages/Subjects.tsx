@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Book, Lightbulb, Users, Brain, CheckCircle, UserPlus, Clock, BarChart3, Lock, Edit, Save, X } from "lucide-react";
+import { Book, Lightbulb, Users, Brain, CheckCircle, UserPlus, Clock, BarChart3, Lock, Edit, Save, X, ChevronRight, BookOpen, FileText, GraduationCap } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubjects, useUpdateSubject, Subject, Chapter } from '@/hooks/useSubjects';
 import api from '@/lib/axios';
@@ -142,7 +142,24 @@ export default function Subjects() {
     return isLocked;
   };
 
-  const handleQuizAccess = (chapterId: number, chapter: Chapter, subjectChapters: Chapter[]) => {
+  const handleChapterAccess = (chapterId: number, chapter: Chapter, subjectChapters: Chapter[]) => {
+    // Only apply locking logic to students
+    if (user?.role === 'student') {
+      const locked = isChapterLocked(chapter, subjectChapters);
+      
+      if (locked) {
+        toast.error(t('subjects.chapterLocked') || 'Complete previous chapter first');
+        return;
+      }
+    }
+    
+    // Navigate to comprehensive chapter resources page
+    navigate(`/chapter/${chapterId}/resources`);
+  };
+
+  const handleQuickQuizAccess = (event: React.MouseEvent, chapterId: number, chapter: Chapter, subjectChapters: Chapter[]) => {
+    event.stopPropagation(); // Prevent triggering the chapter resource navigation
+    
     const locked = isChapterLocked(chapter, subjectChapters);
     
     if (locked) {
@@ -375,10 +392,11 @@ export default function Subjects() {
                           </h4>
                           <div className="space-y-2">
                             {subject.chapters.map((chapter) => {
-                              const locked = isChapterLocked(chapter, subject.chapters);
+                              // Only apply locking to students
+                              const locked = user?.role === 'student' ? isChapterLocked(chapter, subject.chapters) : false;
                               const completed = completedChapters.has(chapter.id);
                               
-                              // TEMPORARY: Force lock chapters 2+ for testing
+                              // TEMPORARY: Force lock chapters 2+ for testing (students only)
                               const forceLocked = user?.role === 'student' && chapter.order > 1;
                               
                               // Debug logging for UI rendering
@@ -387,10 +405,11 @@ export default function Subjects() {
                               return (
                                 <div
                                   key={chapter.id}
-                                  className={`flex items-start justify-between gap-3 p-3 rounded-lg border transition-all group ${
+                                  onClick={() => handleChapterAccess(chapter.id, chapter, subject.chapters)}
+                                  className={`flex items-start justify-between gap-3 p-3 rounded-lg border transition-all group cursor-pointer ${
                                     (locked || forceLocked) 
-                                      ? 'bg-muted/20 border-muted opacity-70 cursor-not-allowed' 
-                                      : 'hover:bg-accent hover:border-accent-foreground/20 border-transparent'
+                                      ? 'bg-muted/20 border-muted opacity-70' 
+                                      : 'hover:bg-accent hover:border-accent-foreground/20 border-transparent hover:shadow-sm'
                                   }`}
                                 >
                                   <div className="flex items-start gap-2 flex-1">
@@ -437,32 +456,41 @@ export default function Subjects() {
                                           </Badge>
                                         )}
                                       </div>
+                                      {/* Resource indicators */}
+                                      {!(locked || forceLocked) && (
+                                        <div className="flex items-center gap-1 mt-2 opacity-70 group-hover:opacity-100 transition-opacity">
+                                          <BookOpen className="h-3 w-3 text-blue-500" title="Lessons" />
+                                          <Brain className="h-3 w-3 text-purple-500" title="Quizzes" />
+                                          <FileText className="h-3 w-3 text-green-500" title="Assignments" />
+                                          <GraduationCap className="h-3 w-3 text-red-500" title="Exams" />
+                                          <span className="text-xs text-muted-foreground ml-1">View all resources</span>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
-                                  {user?.role === 'student' && isEnrolled && (
-                                    <Button
-                                      size="sm"
-                                      variant={(locked || forceLocked) ? "outline" : "ghost"}
-                                      className={`shrink-0 h-8 w-8 p-0 ${
-                                        (locked || forceLocked)
-                                          ? 'border-muted text-muted-foreground cursor-not-allowed' 
-                                          : 'opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent/50'
-                                      }`}
-                                      onClick={() => handleQuizAccess(chapter.id, chapter, subject.chapters)}
-                                      disabled={locked || forceLocked}
-                                    >
+                                  <div className="flex items-center gap-2">
+                                    {/* Quick Quiz Button - Only for enrolled students */}
+                                    {user?.role === 'student' && isEnrolled && !(locked || forceLocked) && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={(e) => handleQuickQuizAccess(e, chapter.id, chapter, subject.chapters)}
+                                        className="h-8 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                      >
+                                        <Brain className="h-3 w-3 mr-1" />
+                                        Quiz
+                                      </Button>
+                                    )}
+                                    
+                                    {/* Main Resources Button - Available to all users, but with restrictions */}
+                                    <div className="flex items-center gap-1">
                                       {(locked || forceLocked) ? (
-                                        <Lock className="h-4 w-4" />
+                                        <Lock className="h-4 w-4 text-muted-foreground" />
                                       ) : (
-                                        <>
-                                          <Brain className="h-4 w-4 mr-1 flex justify-end" />
-                                          <span>
-                                            {t('subjects.quiz')}
-                                          </span>
-                                        </>
+                                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                                       )}
-                                    </Button>
-                                  )}
+                                    </div>
+                                  </div>
                                 </div>
                               );
                             })}

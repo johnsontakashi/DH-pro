@@ -212,9 +212,16 @@ const StudentDashboard = () => {
       {/* Learning Path Section */}
       <Card className="card-shadow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            {t('dashboard.student.personalizedLearningPath')}
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              {t('dashboard.student.personalizedLearningPath')}
+            </div>
+            {learningPath.length > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {showAllChapters ? learningPath.length : Math.min(chaptersToShow, learningPath.length)} of {learningPath.length}
+              </Badge>
+            )}
           </CardTitle>
           <CardDescription>
             {t('dashboard.student.recommendedTopics')}
@@ -276,11 +283,12 @@ const StudentDashboard = () => {
                   )}
                 </div>
               ))}
-              {learningPath.length > chaptersToShow && !showAllChapters && (
+              {!showAllChapters && learningPath.length > chaptersToShow && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
                   <Button
                     variant="outline"
                     onClick={() => setChaptersToShow(prev => Math.min(prev + 6, learningPath.length))}
+                    disabled={chaptersToShow >= learningPath.length}
                   >
                     {t('dashboard.student.loadMore') || 'Load More'} (+{Math.min(6, learningPath.length - chaptersToShow)})
                   </Button>
@@ -292,18 +300,19 @@ const StudentDashboard = () => {
                   </Button>
                 </div>
               )}
-              {showAllChapters && learningPath.length > chaptersToShow && (
-                <div className="space-y-2 mt-4">
+              {showAllChapters && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
                   <Button
                     variant="outline"
-                    className="w-full"
-                    onClick={() => setShowAllChapters(false)}
+                    onClick={() => {
+                      setShowAllChapters(false);
+                      setChaptersToShow(6);
+                    }}
                   >
                     {t('dashboard.student.showLess') || 'Show Less'}
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full"
                     onClick={() => navigate('/subjects')}
                   >
                     {t('dashboard.student.viewInSubjects') || 'View in Subjects Page'}

@@ -53,6 +53,8 @@ interface Submission {
   submitted_at: string;
   grade: number | null;
   feedback: string | null;
+  plagiarism_score: number | null;
+  is_flagged: boolean;
 }
 
 const AssignmentDetail: React.FC = () => {
@@ -331,6 +333,39 @@ const AssignmentDetail: React.FC = () => {
                   <div>
                     <Label>{t('submissions.uploadedFile')}</Label>
                     <p className="text-sm text-gray-600 mt-2">{submission.file_url}</p>
+                  </div>
+                )}
+
+                {/* Plagiarism Score */}
+                {submission.plagiarism_score !== null && (
+                  <div className="pt-4 border-t">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium">Originality Check</Label>
+                      <Badge 
+                        variant={
+                          submission.plagiarism_score > 70 ? "destructive" :
+                          submission.plagiarism_score > 40 ? "secondary" :
+                          "default"
+                        }
+                        className={
+                          submission.plagiarism_score > 70 ? "text-red-600" :
+                          submission.plagiarism_score > 40 ? "text-yellow-600" :
+                          "text-green-600"
+                        }
+                      >
+                        {submission.plagiarism_score.toFixed(1)}% similarity
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      {submission.plagiarism_score < 30 
+                        ? "Your work appears original with minimal similarity to other sources."
+                        : submission.plagiarism_score < 50
+                        ? "Low similarity detected. Your work shows good originality."
+                        : submission.plagiarism_score < 70
+                        ? "Moderate similarity detected. Review your sources and citations."
+                        : "High similarity detected. Please review academic integrity guidelines."}
+                      {submission.is_flagged && " ⚠️ Flagged for review."}
+                    </p>
                   </div>
                 )}
 

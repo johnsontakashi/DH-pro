@@ -45,6 +45,8 @@ interface Submission {
   submitted_at: string;
   grade: number | null;
   feedback: string | null;
+  plagiarism_score: number | null;
+  is_flagged: boolean;
 }
 
 const Assignments: React.FC = () => {

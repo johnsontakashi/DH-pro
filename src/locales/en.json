@@ -337,7 +337,9 @@
     "aiGradeDescription": "Use AI to automatically grade this lab report? The AI will analyze the report content and provide a grade with detailed feedback.",
     "aiGradingInfo": "AI grading evaluates the lab report based on scientific methodology, data analysis, technical writing, and completeness. The grade and feedback will be saved to the submission.",
     "aiGrading": "AI Grading...",
-    "confirmAIGrade": "Confirm AI Grade"
+    "confirmAIGrade": "Confirm AI Grade",
+    "readOnly": "Read-Only",
+    "readOnlyMessage": "This submission cannot be modified after submission"
   },
   "subjects": {
     "title": "EEE Curriculum",
@@ -1140,7 +1142,14 @@
     "excelExported": "Excel exported successfully!",
     "failedExportExcel": "Failed to export Excel",
     "pdfExported": "PDF exported successfully!",
-    "failedExportPDF": "Failed to export PDF"
+    "failedExportPDF": "Failed to export PDF",
+    "selectChapter": "Select Chapter",
+    "completionRate": "Completion Rate",
+    "weakAreas": "Weak Areas",
+    "noWeakAreas": "No weak areas identified",
+    "generateClassFeedback": "Generate Class Feedback",
+    "exportChapterPDF": "Export Chapter PDF",
+    "selectChapterToView": "Select a chapter above to view detailed analytics"
   },
   "messages": {
     "loggedInAs": "Logged in as {{type}}!",

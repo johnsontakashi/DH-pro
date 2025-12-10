@@ -314,10 +314,18 @@ const AssignmentDetail: React.FC = () => {
             // Show existing submission
             <Card>
               <CardHeader>
-                <CardTitle>{t('submissions.yourSubmission')}</CardTitle>
-                <CardDescription>
-                  {t('submissions.submittedOn')} {new Date(submission.submitted_at).toLocaleString()}
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>{t('submissions.yourSubmission')}</CardTitle>
+                    <CardDescription>
+                      {t('submissions.submittedOn')} {new Date(submission.submitted_at).toLocaleString()}
+                    </CardDescription>
+                  </div>
+                  <Badge variant="outline" className="flex items-center gap-1 text-amber-600 border-amber-300 bg-amber-50">
+                    <AlertCircle className="w-3 h-3" />
+                    {t('submissions.readOnly', { defaultValue: 'Read-Only' })}
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {submission.content && (

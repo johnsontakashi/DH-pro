@@ -396,7 +396,9 @@
     "aiGradeDescription": "Utiliser l'IA pour noter automatiquement ce rapport de laboratoire ? L'IA analysera le contenu du rapport et fournira une note avec des commentaires détaillés.",
     "aiGradingInfo": "La notation par IA évalue le rapport de laboratoire en fonction de la méthodologie scientifique, de l'analyse des données, de la rédaction technique et de l'exhaustivité. La note et les commentaires seront enregistrés dans la soumission.",
     "aiGrading": "Notation IA en cours...",
-    "confirmAIGrade": "Confirmer la notation IA"
+    "confirmAIGrade": "Confirmer la notation IA",
+    "readOnly": "Lecture seule",
+    "readOnlyMessage": "Cette soumission ne peut pas être modifiée après soumission"
   },
   "subjects": {
     "title": "Cursus EEE",
@@ -1183,7 +1185,14 @@
     "excelExported": "Excel exporté avec succès !",
     "failedExportExcel": "Échec de l'exportation Excel",
     "pdfExported": "PDF exporté avec succès !",
-    "failedExportPDF": "Échec de l'exportation PDF"
+    "failedExportPDF": "Échec de l'exportation PDF",
+    "selectChapter": "Sélectionner un chapitre",
+    "completionRate": "Taux de complétion",
+    "weakAreas": "Points faibles",
+    "noWeakAreas": "Aucun point faible identifié",
+    "generateClassFeedback": "Générer un feedback pour la classe",
+    "exportChapterPDF": "Exporter le chapitre en PDF",
+    "selectChapterToView": "Sélectionnez un chapitre ci-dessus pour voir les analyses détaillées"
   },
   "messages": {
     "loggedInAs": "Connecté en tant que {{type}} !",

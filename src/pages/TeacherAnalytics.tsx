@@ -394,11 +394,130 @@ export default function TeacherAnalytics() {
               <CardDescription>{t('analytics.selectChapterView')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                {t('analytics.chapterAnalyticsAPI')}
-                <br />
-                {t('analytics.selectFromSubjects')}
+              {/* Chapter Selector */}
+              <div className="mb-6">
+                <Label className="text-sm font-medium mb-2 block">{t('analytics.selectChapter')}</Label>
+                <Select
+                  value={selectedChapter?.toString() || ""}
+                  onValueChange={(v) => fetchChapterAnalytics(parseInt(v))}
+                >
+                  <SelectTrigger className="max-w-md">
+                    <SelectValue placeholder={t('aiStudy.chooseChapter')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {chapters.map((chapter) => (
+                      <SelectItem key={chapter.id} value={chapter.id.toString()}>
+                        {chapter.subject_name} - {chapter.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {/* Chapter Analytics Display */}
+              {chapterAnalytics ? (
+                <div className="space-y-6">
+                  {/* Chapter Stats Cards */}
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <Card className="bg-muted/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{t('analytics.totalStudents')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">{chapterAnalytics.total_students}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-muted/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{t('analytics.avgScore')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className={`text-2xl font-bold ${getScoreColor(chapterAnalytics.avg_score)}`}>
+                          {chapterAnalytics.avg_score.toFixed(1)}%
+                        </div>
+                        <Progress value={chapterAnalytics.avg_score} className="h-2 mt-2" />
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-muted/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{t('analytics.completionRate')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">{chapterAnalytics.completion_rate.toFixed(1)}%</div>
+                        <Progress value={chapterAnalytics.completion_rate} className="h-2 mt-2" />
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-muted/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{t('analytics.weakAreas')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {chapterAnalytics.weak_areas.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {chapterAnalytics.weak_areas.map((area, idx) => (
+                              <Badge key={idx} variant="destructive" className="text-xs">
+                                {area}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-success">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span className="text-sm">{t('analytics.noWeakAreas')}</span>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Generate Class Feedback Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => generateClassFeedback(selectedChapter!)}
+                      disabled={!selectedChapter}
+                    >
+                      <Brain className="h-4 w-4 mr-2" />
+                      {t('analytics.generateClassFeedback')}
+                    </Button>
+                  </div>
+
+                  {/* Export Chapter PDF */}
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          const response = await api.get(`/analytics/export/chapter/${selectedChapter}/pdf`, {
+                            responseType: "blob",
+                          });
+                          const url = window.URL.createObjectURL(new Blob([response.data]));
+                          const link = document.createElement("a");
+                          link.href = url;
+                          link.setAttribute("download", `chapter_analytics_${selectedChapter}_${new Date().toISOString().split('T')[0]}.pdf`);
+                          document.body.appendChild(link);
+                          link.click();
+                          link.remove();
+                          toast.success(t('analytics.pdfExported'));
+                        } catch (error) {
+                          toast.error(t('analytics.failedExportPDF'));
+                        }
+                      }}
+                      disabled={!selectedChapter}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      {t('analytics.exportChapterPDF')}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>{t('analytics.selectChapterToView')}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -224,12 +224,6 @@ const AppRoutes = () => (
       </ProtectedRoute>
     } />
 
-    <Route path="/teacher/content-creator" element={
-      <ProtectedRoute requiredRole="teacher">
-        <ContentCreator />
-      </ProtectedRoute>
-    } />
-
     <Route path="/exams" element={
       <ProtectedRoute requiredRole="student">
         <ExamList />

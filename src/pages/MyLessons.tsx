@@ -15,7 +15,9 @@ import {
   Plus,
   Loader2,
   CheckCircle2,
-  Calendar
+  Calendar,
+  Copy,
+  Edit
 } from 'lucide-react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
@@ -81,6 +83,21 @@ export default function MyLessons() {
   const handleViewDetails = (lesson: LessonPlan) => {
     setSelectedLesson(lesson);
     setDetailsOpen(true);
+  };
+
+  const handleEdit = (lesson: LessonPlan) => {
+    // Navigate to edit page (to be created)
+    navigate(`/teacher/lesson-planner/edit/${lesson.id}`);
+  };
+
+  const handleDuplicate = async (lessonId: number) => {
+    try {
+      await api.post(`/lesson-plans/${lessonId}/duplicate`);
+      toast.success('Lesson plan duplicated successfully');
+      loadLessons();
+    } catch (error: any) {
+      toast.error('Failed to duplicate lesson plan');
+    }
   };
 
   if (loading) {
@@ -183,6 +200,22 @@ export default function MyLessons() {
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(lesson)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDuplicate(lesson.id)}
+                    >
+                      <Copy className="h-4 w-4 mr-1" />
+                      Duplicate
                     </Button>
                     <Button
                       variant="outline"

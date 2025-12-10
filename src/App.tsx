@@ -48,6 +48,7 @@ import FlashcardStudy from "./pages/FlashcardStudy";
 import ContentCreator from "./pages/ContentCreator";
 import StudentFeedback from "./pages/StudentFeedback";
 import MyLessons from "./pages/MyLessons";
+import LessonPlanEditor from "./pages/LessonPlanEditor";
 import ChapterResources from "./pages/ChapterResources";
 import ResourceLibrary from "./pages/ResourceLibrary";
 import ExamSubmissions from "./pages/ExamSubmissions";
@@ -214,6 +215,12 @@ const AppRoutes = () => (
     <Route path="/teacher/my-lessons" element={
       <ProtectedRoute requiredRole="teacher">
         <MyLessons />
+      </ProtectedRoute>
+    } />
+
+    <Route path="/teacher/lesson-planner/edit/:id" element={
+      <ProtectedRoute requiredRole="teacher">
+        <LessonPlanEditor />
       </ProtectedRoute>
     } />
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,21 +11,64 @@ import { Brain, Clock, BookOpen, CheckCircle2 } from "lucide-react";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 
+interface Subject {
+  id: number;
+  name: string;
+  chapters: Chapter[];
+}
+
+interface Chapter {
+  id: number;
+  name: string;
+  order: number;
+}
+
 export default function LessonPlanner() {
   const { t } = useTranslation();
   const [generating, setGenerating] = useState(false);
   const [lessonPlan, setLessonPlan] = useState<any>(null);
+  
+  // Subject/Chapter state
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<number | null>(null);
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  
   const [formData, setFormData] = useState({
-    chapter_id: "",
     duration_minutes: 60,
     student_level: "undergraduate",
     learning_objectives: "",
     additional_notes: ""
   });
 
+  useEffect(() => {
+    loadSubjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedSubject) {
+      const subject = subjects.find(s => s.id === selectedSubject);
+      if (subject) {
+        setChapters(subject.chapters || []);
+        setSelectedChapter(null);
+      }
+    }
+  }, [selectedSubject, subjects]);
+
+  const loadSubjects = async () => {
+    try {
+      const response = await api.get('/subjects/');
+      const subjectsData = response.data.subjects || response.data || [];
+      setSubjects(subjectsData);
+    } catch (error) {
+      console.error('Error loading subjects:', error);
+      toast.error('Failed to load subjects');
+    }
+  };
+
   const generateLessonPlan = async () => {
-    if (!formData.chapter_id) {
-      toast.error(t('lessonPlanner.selectChapterError'));
+    if (!selectedChapter) {
+      toast.error('Please select a chapter first');
       return;
     }
 
@@ -37,7 +80,7 @@ export default function LessonPlanner() {
         : [];
 
       const response = await api.post("/lesson-plans/generate-ai", {
-        chapter_id: parseInt(formData.chapter_id),
+        chapter_id: selectedChapter,
         duration_minutes: formData.duration_minutes,
         learning_objectives: objectives,
         student_level: formData.student_level,
@@ -74,15 +117,45 @@ export default function LessonPlanner() {
             <CardDescription>{t('lessonPlanner.configurePlan')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Subject Selection */}
             <div className="space-y-2">
-              <Label htmlFor="chapter">{t('lessonPlanner.chapterId')}</Label>
-              <Input
-                id="chapter"
-                type="number"
-                placeholder={t('lessonPlanner.enterChapterId')}
-                value={formData.chapter_id}
-                onChange={(e) => setFormData({ ...formData, chapter_id: e.target.value })}
-              />
+              <Label htmlFor="subject">Subject</Label>
+              <Select
+                value={selectedSubject?.toString()}
+                onValueChange={(v) => setSelectedSubject(parseInt(v))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a subject" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjects.map(subject => (
+                    <SelectItem key={subject.id} value={subject.id.toString()}>
+                      {subject.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Chapter Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="chapter">Chapter</Label>
+              <Select
+                value={selectedChapter?.toString()}
+                onValueChange={(v) => setSelectedChapter(parseInt(v))}
+                disabled={!selectedSubject}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={selectedSubject ? "Choose a chapter" : "Select subject first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {chapters.map(chapter => (
+                    <SelectItem key={chapter.id} value={chapter.id.toString()}>
+                      {chapter.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

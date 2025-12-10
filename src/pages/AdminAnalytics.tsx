@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   BarChart3,
   Activity,
@@ -14,7 +15,9 @@ import {
   Clock,
   FileText,
   Loader2,
-  Download
+  Download,
+  Info,
+  HelpCircle
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
@@ -274,6 +277,57 @@ const AdminAnalytics = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Analytics Methodology Explanation */}
+      <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 card-shadow">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+            <Info className="h-5 w-5" />
+            {t('adminAnalytics.howAnalyticsWork')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+                <span className="font-medium text-left">{t('adminAnalytics.chapterAnalyticsExplained')}</span>
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+              <p>{t('adminAnalytics.chapterLogic1')}</p>
+              <p>{t('adminAnalytics.chapterLogic2')}</p>
+              <p>{t('adminAnalytics.chapterLogic3')}</p>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+                <span className="font-medium text-left">{t('adminAnalytics.weakAreasExplained')}</span>
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+              <p>{t('adminAnalytics.weakAreasLogic1')}</p>
+              <p>{t('adminAnalytics.weakAreasLogic2')}</p>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+                <span className="font-medium text-left">{t('adminAnalytics.scoresExplained')}</span>
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+              <p>{t('adminAnalytics.scoresLogic1')}</p>
+              <p>{t('adminAnalytics.scoresLogic2')}</p>
+            </CollapsibleContent>
+          </Collapsible>
+        </CardContent>
+      </Card>
 
       {/* Chapter-Level Statistics */}
       <Card className="card-shadow">

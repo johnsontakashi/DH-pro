@@ -1021,7 +1021,18 @@
       "good": "Good",
       "warning": "Warning",
       "poor": "Poor"
-    }
+    },
+    "howAnalyticsWork": "How Analytics Work",
+    "chapterAnalyticsExplained": "How are chapter-level analytics calculated?",
+    "weakAreasExplained": "How are weak areas identified?",
+    "scoresExplained": "How are scores and averages computed?",
+    "chapterLogic1": "Chapter analytics aggregate data from all students' quiz attempts, assignments, and progress for that specific chapter.",
+    "chapterLogic2": "Average scores are calculated using students' best attempts per quiz to provide accurate performance representation.",
+    "chapterLogic3": "Completion rates are based on students who have attempted at least 10 questions in the chapter.",
+    "weakAreasLogic1": "Weak areas are identified using Bloom's taxonomy analysis when class average falls below 60% in specific cognitive levels.",
+    "weakAreasLogic2": "The system tracks Remember, Understand, Apply, Analyze, Evaluate, and Create levels across all student responses.",
+    "scoresLogic1": "All scores are percentage-based and weighted by question difficulty and cognitive complexity.",
+    "scoresLogic2": "Badge colors indicate performance levels: green (≥70%), default/blue (60-69%), secondary/gray (<60%)."
   },
   "aiChat": {
     "title": "AI Study Assistant",
@@ -1164,7 +1175,25 @@
     "noExamFeedback": "No exam feedback yet",
     "yourStrengths": "Your Strengths",
     "areasForImprovement": "Areas for Improvement",
-    "recommendations": "Recommendations"
+    "recommendations": "Recommendations",
+    "howAIWorks": "How AI Feedback Works",
+    "areasForImprovementExplained": "How are 'Areas for Improvement' generated?",
+    "recommendationsExplained": "How are recommendations determined?",
+    "bloomTaxonomyExplained": "What is Bloom's Taxonomy analysis?",
+    "improvementLogic1": "Areas for improvement are identified when your performance falls below 60% in specific skill areas (Bloom's taxonomy levels).",
+    "improvementLogic2": "The AI analyzes your quiz and assignment scores across Remember, Understand, Apply, Analyze, Evaluate, and Create levels.",
+    "improvementLogic3": "When you consistently score low in a particular cognitive level, it suggests focused practice in that area.",
+    "recommendationLogic1": "Recommendations are generated based on your learning patterns and performance gaps.",
+    "recommendationLogic2": "The AI considers your strongest and weakest areas to suggest personalized study paths.",
+    "recommendationLogic3": "Recommendations prioritize urgent needs (scores <40%) as high priority and moderate needs (40-60%) as medium priority.",
+    "bloomLogic1": "Bloom's Taxonomy categorizes learning into six cognitive levels, from basic recall to creative synthesis.",
+    "bloomLogic2": "Our AI tracks your performance at each level to provide targeted feedback:",
+    "rememberLevel": "Basic recall of facts and concepts",
+    "understandLevel": "Explaining ideas and concepts",
+    "applyLevel": "Using information in new situations",
+    "analyzeLevel": "Drawing connections and identifying patterns",
+    "evaluateLevel": "Justifying decisions and making judgments",
+    "createLevel": "Producing new or original work"
   },
   "examResults": {
     "loadingResults": "Loading results...",

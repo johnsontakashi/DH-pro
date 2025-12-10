@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   MessagesSquare,
@@ -12,7 +14,9 @@ import {
   CheckCircle,
   CheckCircle2,
   Lightbulb,
-  Target
+  Target,
+  Info,
+  HelpCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
@@ -89,6 +93,68 @@ const StudentFeedback = () => {
   const quizFeedbacks = feedbacks.filter(f => f.feedback_type === 'quiz');
   const examFeedbacks = feedbacks.filter(f => f.feedback_type === 'exam');
   const generalFeedbacks = feedbacks.filter(f => !['assignment', 'quiz', 'exam'].includes(f.feedback_type));
+
+  // AI Logic Explanation Component
+  const AIExplanationCard = () => (
+    <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+          <Info className="h-5 w-5" />
+          {t('feedback.howAIWorks')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+              <span className="font-medium text-left">{t('feedback.areasForImprovementExplained')}</span>
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+            <p>{t('feedback.improvementLogic1')}</p>
+            <p>{t('feedback.improvementLogic2')}</p>
+            <p>{t('feedback.improvementLogic3')}</p>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+              <span className="font-medium text-left">{t('feedback.recommendationsExplained')}</span>
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+            <p>{t('feedback.recommendationLogic1')}</p>
+            <p>{t('feedback.recommendationLogic2')}</p>
+            <p>{t('feedback.recommendationLogic3')}</p>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between p-0 h-auto font-normal">
+              <span className="font-medium text-left">{t('feedback.bloomTaxonomyExplained')}</span>
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2 text-sm text-muted-foreground space-y-2">
+            <p>{t('feedback.bloomLogic1')}</p>
+            <p>{t('feedback.bloomLogic2')}</p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>{t('progress.bloomTaxonomy.remember')}:</strong> {t('feedback.rememberLevel')}</li>
+              <li><strong>{t('progress.bloomTaxonomy.understand')}:</strong> {t('feedback.understandLevel')}</li>
+              <li><strong>{t('progress.bloomTaxonomy.apply')}:</strong> {t('feedback.applyLevel')}</li>
+              <li><strong>{t('progress.bloomTaxonomy.analyze')}:</strong> {t('feedback.analyzeLevel')}</li>
+              <li><strong>{t('progress.bloomTaxonomy.evaluate')}:</strong> {t('feedback.evaluateLevel')}</li>
+              <li><strong>{t('progress.bloomTaxonomy.create')}:</strong> {t('feedback.createLevel')}</li>
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardContent>
+    </Card>
+  );
 
   // Helper function to render feedback card
   const renderFeedbackCard = (feedback: Feedback) => (
@@ -219,7 +285,11 @@ const StudentFeedback = () => {
           </CardContent>
         </Card>
       ) : (
-        <Tabs defaultValue="all" className="space-y-6">
+        <div className="space-y-6">
+          {/* AI Explanation Card */}
+          <AIExplanationCard />
+          
+          <Tabs defaultValue="all" className="space-y-6">
           <TabsList>
             <TabsTrigger value="all">{t('feedback.allFeedback')} ({feedbacks.length})</TabsTrigger>
             <TabsTrigger value="assignments">{t('feedback.assignments')} ({assignmentFeedbacks.length})</TabsTrigger>
@@ -293,6 +363,7 @@ const StudentFeedback = () => {
             </TabsContent>
           )}
         </Tabs>
+        </div>
       )}
     </div>
   );

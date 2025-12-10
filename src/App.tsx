@@ -49,6 +49,7 @@ import ContentCreator from "./pages/ContentCreator";
 import StudentFeedback from "./pages/StudentFeedback";
 import MyLessons from "./pages/MyLessons";
 import ChapterResources from "./pages/ChapterResources";
+import ResourceLibrary from "./pages/ResourceLibrary";
 import NotFound from "./pages/NotFound";
 
 // Protected Route Component
@@ -163,6 +164,12 @@ const AppRoutes = () => (
     <Route path="/subjects" element={
       <ProtectedRoute>
         <Subjects />
+      </ProtectedRoute>
+    } />
+
+    <Route path="/resources" element={
+      <ProtectedRoute>
+        <ResourceLibrary />
       </ProtectedRoute>
     } />
 

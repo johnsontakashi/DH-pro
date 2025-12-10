@@ -20,7 +20,8 @@ import {
   Zap,
   Layers,
   MessagesSquare,
-  History
+  History,
+  Library
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -58,6 +59,7 @@ export function AppSidebar() {
   const studentNavItems = [
     { titleKey: "nav.dashboard", url: "/student", icon: Home },
     { titleKey: "nav.subjects", url: "/subjects", icon: Book },
+    { titleKey: "nav.resourceLibrary", url: "/resources", icon: Library },
     { titleKey: "nav.aiAssistant", url: "/ai-chat", icon: MessageSquare },
     { titleKey: "nav.assignments", url: "/assignments", icon: Clipboard },
     // { titleKey: "nav.labReports", url: "/lab-reports", icon: TestTube },
@@ -69,6 +71,7 @@ export function AppSidebar() {
   const teacherNavItems = [
     { titleKey: "nav.dashboard", url: "/teacher", icon: Home },
     { titleKey: "nav.subjects", url: "/subjects", icon: Book },
+    { titleKey: "nav.resourceLibrary", url: "/resources", icon: Library },
     { titleKey: "nav.assignments", url: "/assignments", icon: Clipboard },
     // { titleKey: "nav.labReports", url: "/lab-reports", icon: TestTube },
     { titleKey: "nav.contentCreator", url: "/teacher/content-creator", icon: Layers },
@@ -81,6 +84,7 @@ export function AppSidebar() {
   const adminNavItems = [
     { titleKey: "nav.dashboard", url: "/admin", icon: Home },
     { titleKey: "nav.subjects", url: "/subjects", icon: Book },
+    { titleKey: "nav.resourceLibrary", url: "/resources", icon: Library },
     { titleKey: "nav.userManagement", url: "/admin/users", icon: Users },
     { titleKey: "nav.analytics", url: "/admin/analytics", icon: BarChart3 },
     { titleKey: "nav.ragTest", url: "/rag-test", icon: Database },

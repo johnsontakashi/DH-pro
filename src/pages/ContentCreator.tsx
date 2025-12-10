@@ -95,6 +95,14 @@ const ContentCreator = () => {
   const [questionStats, setQuestionStats] = useState<any>(null);
   const [loadingQuestionStats, setLoadingQuestionStats] = useState(false);
 
+  // Question filtering state  
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [filterDifficulty, setFilterDifficulty] = useState<string>('');
+  const [filterBloomLevel, setFilterBloomLevel] = useState<string>('');
+  const [filterQuestionType, setFilterQuestionType] = useState<string>('');
+  const [showQuestionViewer, setShowQuestionViewer] = useState(false);
+
   // Quiz state
   const [quizTitle, setQuizTitle] = useState('');
   const [quizDescription, setQuizDescription] = useState('');
@@ -123,6 +131,11 @@ const ContentCreator = () => {
   const [historyFlashcards, setHistoryFlashcards] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
+  // Computed values
+  const selectedChapterName = selectedChapter 
+    ? chapters.find(c => c.id === selectedChapter)?.name || 'Unknown Chapter'
+    : 'No Chapter Selected';
+
   // Load subjects on mount
   useEffect(() => {
     loadSubjects();
@@ -146,8 +159,18 @@ const ContentCreator = () => {
       loadResources(selectedChapter);
       loadQuestionStatistics(selectedChapter);
       loadContentHistory(selectedChapter);
+      if (showQuestionViewer) {
+        loadQuestions(selectedChapter);
+      }
     }
   }, [selectedChapter]);
+
+  // Reload questions when filters change
+  useEffect(() => {
+    if (selectedChapter && showQuestionViewer) {
+      loadQuestions(selectedChapter);
+    }
+  }, [filterDifficulty, filterBloomLevel, filterQuestionType, showQuestionViewer]);
 
   const loadSubjects = async () => {
     try {
@@ -186,6 +209,36 @@ const ContentCreator = () => {
       setQuestionStats(null);
     } finally {
       setLoadingQuestionStats(false);
+    }
+  };
+
+  const loadQuestions = async (chapterId: number) => {
+    try {
+      setLoadingQuestions(true);
+      
+      // Build query parameters for filtering
+      const params = new URLSearchParams();
+      if (filterDifficulty) params.append('difficulty', filterDifficulty);
+      if (filterBloomLevel) params.append('bloom_level', filterBloomLevel);
+      
+      const queryString = params.toString();
+      const url = `/questions/chapter/${chapterId}${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await api.get(url);
+      const questionsData = response.data.questions || [];
+      
+      // Apply frontend filtering for question type (if backend doesn't support it)
+      let filteredQuestions = questionsData;
+      if (filterQuestionType) {
+        filteredQuestions = questionsData.filter((q: any) => q.question_type === filterQuestionType);
+      }
+      
+      setQuestions(filteredQuestions);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      setQuestions([]);
+    } finally {
+      setLoadingQuestions(false);
     }
   };
 
@@ -793,6 +846,187 @@ const ContentCreator = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* View Questions Button */}
+                  <div className="pt-4 border-t">
+                    <Button
+                      onClick={() => setShowQuestionViewer(!showQuestionViewer)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      {showQuestionViewer ? (
+                        <>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Hide Question Viewer
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View & Filter Questions
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Question Viewer and Filter Interface */}
+            {showQuestionViewer && questionStats && questionStats.total_questions > 0 && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-blue-500" />
+                    Question Bank Viewer
+                  </CardTitle>
+                  <CardDescription>
+                    Filter and browse existing questions for {selectedChapterName}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Filters */}
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div>
+                      <Label>Filter by Difficulty</Label>
+                      <Select value={filterDifficulty} onValueChange={setFilterDifficulty}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Difficulties" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Difficulties</SelectItem>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Filter by Bloom's Level</Label>
+                      <Select value={filterBloomLevel} onValueChange={setFilterBloomLevel}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Bloom Levels" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Bloom Levels</SelectItem>
+                          <SelectItem value="remember">Remember</SelectItem>
+                          <SelectItem value="understand">Understand</SelectItem>
+                          <SelectItem value="apply">Apply</SelectItem>
+                          <SelectItem value="analyze">Analyze</SelectItem>
+                          <SelectItem value="evaluate">Evaluate</SelectItem>
+                          <SelectItem value="create">Create</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Filter by Question Type</Label>
+                      <Select value={filterQuestionType} onValueChange={setFilterQuestionType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Types</SelectItem>
+                          <SelectItem value="mcq">Multiple Choice</SelectItem>
+                          <SelectItem value="true_false">True/False</SelectItem>
+                          <SelectItem value="short_answer">Short Answer</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Clear Filters Button */}
+                  {(filterDifficulty || filterBloomLevel || filterQuestionType) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setFilterDifficulty('');
+                        setFilterBloomLevel('');
+                        setFilterQuestionType('');
+                      }}
+                    >
+                      <RefreshCw className="mr-2 h-3 w-3" />
+                      Clear All Filters
+                    </Button>
+                  )}
+
+                  {/* Questions List */}
+                  {loadingQuestions ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                      Loading questions...
+                    </div>
+                  ) : questions.length === 0 ? (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        No questions found with the selected filters. Try adjusting your filter criteria.
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-muted-foreground">
+                          Showing {questions.length} question{questions.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {questions.map((question, index) => (
+                          <div key={question.id} className="border rounded-lg p-4 space-y-2">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge variant="outline" className="text-xs">
+                                    {question.question_type.replace('_', ' ').toUpperCase()}
+                                  </Badge>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={`text-xs ${
+                                      question.difficulty === 'beginner' ? 'border-green-500 text-green-700' :
+                                      question.difficulty === 'medium' ? 'border-yellow-500 text-yellow-700' :
+                                      'border-red-500 text-red-700'
+                                    }`}
+                                  >
+                                    {question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}
+                                  </Badge>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {question.bloom_level.charAt(0).toUpperCase() + question.bloom_level.slice(1)}
+                                  </Badge>
+                                </div>
+                                <p className="font-medium text-sm mb-2">
+                                  {index + 1}. {question.question_text}
+                                </p>
+                                {question.question_type === 'mcq' && question.options && (
+                                  <div className="text-xs text-muted-foreground space-y-1">
+                                    {Object.entries(question.options).map(([key, value]) => (
+                                      <div 
+                                        key={key} 
+                                        className={`pl-2 ${key === question.correct_answer ? 'font-semibold text-green-600' : ''}`}
+                                      >
+                                        {key}) {value} {key === question.correct_answer && '✓'}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {question.question_type !== 'mcq' && (
+                                  <div className="text-xs text-muted-foreground">
+                                    <strong>Answer:</strong> {question.correct_answer}
+                                  </div>
+                                )}
+                                {question.explanation_text && (
+                                  <div className="text-xs text-muted-foreground mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                                    <strong>Explanation:</strong> {question.explanation_text}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

@@ -77,6 +77,7 @@ export function AppSidebar() {
     // { titleKey: "nav.labReports", url: "/lab-reports", icon: TestTube },
     { titleKey: "nav.examManagement", url: "/teacher/exams", icon: Shield },
     { titleKey: "nav.contentCreator", url: "/teacher/content-creator", icon: Layers },
+    { titleKey: "nav.flashcards", url: "/teacher/flashcards", icon: Zap },
     { titleKey: "nav.uploadResource", url: "/upload-resource", icon: Upload },
     { titleKey: "nav.analytics", url: "/teacher/analytics", icon: BarChart3 },
     { titleKey: "nav.aiLessonPlanner", url: "/teacher/lesson-planner", icon: Lightbulb },

@@ -173,31 +173,6 @@ const CreateAssignment: React.FC = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* AI Generate Button */}
-            {formData.chapter_id && (
-              <div className="flex justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={generateWithAI}
-                  disabled={generating || !formData.chapter_id}
-                  className="gap-2"
-                >
-                  {generating ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      {t('assignments.generating')}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      {t('assignments.generateWithAI')}
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-
             {/* Title */}
             <div>
               <Label htmlFor="title">
@@ -207,9 +182,15 @@ const CreateAssignment: React.FC = () => {
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder={t('assignments.enterTitle')}
+                placeholder={formData.title || t('assignments.enterTitle')}
                 required
               />
+              {!formData.title && !formData.description && (
+                <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  Tip: Select a chapter below to generate content with AI
+                </p>
+              )}
             </div>
 
             {/* Description */}
@@ -273,6 +254,45 @@ const CreateAssignment: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* AI Generation Section */}
+            <div className="space-y-4 p-4 border border-purple-200 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-600" />
+                <h3 className="font-semibold text-purple-800 dark:text-purple-200">AI Assignment Generation</h3>
+              </div>
+              
+              {!formData.chapter_id ? (
+                <div className="text-sm text-purple-700 dark:text-purple-300">
+                  📝 Select a subject and chapter above to generate an assignment with AI
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-purple-700 dark:text-purple-300">
+                    Generate assignment content automatically based on the selected chapter
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={generateWithAI}
+                    disabled={generating || !formData.chapter_id}
+                    className="gap-2 border-purple-300 text-purple-700 hover:bg-purple-100 dark:border-purple-600 dark:text-purple-300"
+                  >
+                    {generating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        {t('assignments.generating')}
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        {t('assignments.generateWithAI')}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Due Date and Max Score */}

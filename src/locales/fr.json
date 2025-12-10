@@ -225,7 +225,12 @@
     "weakAreasLogic1": "Les domaines faibles sont identifiés à l'aide de l'analyse de la taxonomie de Bloom lorsque la moyenne de classe tombe en dessous de 60% dans des niveaux cognitifs spécifiques.",
     "weakAreasLogic2": "Le système suit les niveaux Se souvenir, Comprendre, Appliquer, Analyser, Évaluer et Créer à travers toutes les réponses des étudiants.",
     "scoresLogic1": "Tous les scores sont basés sur des pourcentages et pondérés par la difficulté des questions et la complexité cognitive.",
-    "scoresLogic2": "Les couleurs des badges indiquent les niveaux de performance : vert (≥70%), bleu par défaut (60-69%), gris secondaire (<60%)."
+    "scoresLogic2": "Les couleurs des badges indiquent les niveaux de performance : vert (≥70%), bleu par défaut (60-69%), gris secondaire (<60%).",
+    "exportCSV": "Exporter CSV",
+    "exportExcel": "Exporter Excel",
+    "exportPDF": "Exporter PDF", 
+    "exportSuccess": "Export {{type}} terminé avec succès !",
+    "exportFailed": "Échec de l'export du fichier {{type}}"
   },
   "aiAssistant": {
     "title": "Assistant d'étude IA",

@@ -76,6 +76,7 @@ const AdminAnalytics = () => {
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [exportLoading, setExportLoading] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -128,6 +129,54 @@ const AdminAnalytics = () => {
     ? chapterStats
     : chapterStats.filter(c => c.subject_name === selectedSubject);
 
+  const handleExport = async (type: 'csv' | 'excel' | 'pdf', chapterId?: number) => {
+    try {
+      setExportLoading(type);
+      let url = '';
+      let filename = '';
+
+      switch (type) {
+        case 'csv':
+          url = `/analytics/export/students/csv${chapterId ? `?chapter_id=${chapterId}` : ''}`;
+          filename = `student_data_${new Date().toISOString().slice(0, 10)}.csv`;
+          break;
+        case 'excel':
+          url = `/analytics/export/students/excel${chapterId ? `?chapter_id=${chapterId}` : ''}`;
+          filename = `student_data_${new Date().toISOString().slice(0, 10)}.xlsx`;
+          break;
+        case 'pdf':
+          if (chapterId) {
+            url = `/analytics/export/chapter/${chapterId}/pdf`;
+            filename = `chapter_analytics_${chapterId}_${new Date().toISOString().slice(0, 10)}.pdf`;
+          } else {
+            url = `/analytics/export/class-overview/pdf`;
+            filename = `class_overview_${new Date().toISOString().slice(0, 10)}.pdf`;
+          }
+          break;
+      }
+
+      const response = await api.get(url, { responseType: 'blob' });
+      
+      // Create download link
+      const blob = new Blob([response.data]);
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+
+      toast.success(`${type.toUpperCase()} export completed successfully!`);
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error(`Failed to export ${type.toUpperCase()} file`);
+    } finally {
+      setExportLoading(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center p-6">
@@ -144,9 +193,59 @@ const AdminAnalytics = () => {
           <h1 className="text-3xl font-bold text-foreground">{t('adminAnalytics.title')}</h1>
           <p className="text-muted-foreground">{t('adminAnalytics.subtitle')}</p>
         </div>
-        <Badge variant="outline" className="text-sm">
-          Live Data
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Badge variant="outline" className="text-sm">
+            Live Data
+          </Badge>
+          
+          {/* Export Buttons */}
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleExport('csv')}
+              disabled={exportLoading === 'csv'}
+              className="flex items-center gap-2"
+            >
+              {exportLoading === 'csv' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Export CSV
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleExport('excel')}
+              disabled={exportLoading === 'excel'}
+              className="flex items-center gap-2"
+            >
+              {exportLoading === 'excel' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Export Excel
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleExport('pdf')}
+              disabled={exportLoading === 'pdf'}
+              className="flex items-center gap-2"
+            >
+              {exportLoading === 'pdf' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              Export PDF
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* System Overview Stats */}
@@ -372,6 +471,7 @@ const AdminAnalytics = () => {
                     <th className="text-center p-3">Assignments</th>
                     <th className="text-center p-3">Submissions</th>
                     <th className="text-center p-3">Flashcards</th>
+                    <th className="text-center p-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -394,6 +494,23 @@ const AdminAnalytics = () => {
                       <td className="p-3 text-center">{chapter.total_assignments}</td>
                       <td className="p-3 text-center">{chapter.submissions}</td>
                       <td className="p-3 text-center">{chapter.total_flashcards}</td>
+                      <td className="p-3 text-center">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleExport('pdf', chapter.chapter_id)}
+                          disabled={exportLoading === 'pdf'}
+                          className="flex items-center gap-1"
+                          title="Export chapter analytics to PDF"
+                        >
+                          {exportLoading === 'pdf' ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Download className="h-3 w-3" />
+                          )}
+                          PDF
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

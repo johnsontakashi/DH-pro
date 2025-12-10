@@ -1032,7 +1032,12 @@
     "weakAreasLogic1": "Weak areas are identified using Bloom's taxonomy analysis when class average falls below 60% in specific cognitive levels.",
     "weakAreasLogic2": "The system tracks Remember, Understand, Apply, Analyze, Evaluate, and Create levels across all student responses.",
     "scoresLogic1": "All scores are percentage-based and weighted by question difficulty and cognitive complexity.",
-    "scoresLogic2": "Badge colors indicate performance levels: green (≥70%), default/blue (60-69%), secondary/gray (<60%)."
+    "scoresLogic2": "Badge colors indicate performance levels: green (≥70%), default/blue (60-69%), secondary/gray (<60%).",
+    "exportCSV": "Export CSV",
+    "exportExcel": "Export Excel", 
+    "exportPDF": "Export PDF",
+    "exportSuccess": "{{type}} export completed successfully!",
+    "exportFailed": "Failed to export {{type}} file"
   },
   "aiChat": {
     "title": "AI Study Assistant",

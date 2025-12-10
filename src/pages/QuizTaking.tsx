@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { Clock, CheckCircle, XCircle, TrendingUp, Sparkles } from "lucide-react";
+import { Clock, CheckCircle, XCircle, TrendingUp, Sparkles, AlertTriangle } from "lucide-react";
 import api from "@/lib/axios";
 
 interface Question {
@@ -57,6 +57,7 @@ export default function QuizTaking() {
   const [questionTimes, setQuestionTimes] = useState<Map<number, number>>(new Map());
   const [elapsedTime, setElapsedTime] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [warningsShown, setWarningsShown] = useState<Set<number>>(new Set());
 
   // Fetch quiz and start attempt
   useEffect(() => {
@@ -100,13 +101,53 @@ export default function QuizTaking() {
     return () => clearInterval(timer);
   }, []);
 
-  // Check time limit
+  // Check time limit and show warnings
   useEffect(() => {
-    if (quiz?.time_limit && elapsedTime >= quiz.time_limit * 60) {
-      toast.warning(t('quizTaking.timesUp'));
-      handleSubmit();
+    if (quiz?.time_limit) {
+      const totalSeconds = quiz.time_limit * 60;
+      const remaining = totalSeconds - elapsedTime;
+      
+      // Auto-submit when time is up
+      if (remaining <= 0) {
+        toast.error('Time\'s up! Quiz submitted automatically.');
+        handleSubmit();
+        return;
+      }
+      
+      // Show warnings at specific intervals
+      const newWarnings = new Set(warningsShown);
+      
+      // 10 minutes warning
+      if (remaining <= 600 && !warningsShown.has(600)) {
+        toast.warning('10 minutes remaining!');
+        newWarnings.add(600);
+      }
+      // 5 minutes warning  
+      if (remaining <= 300 && !warningsShown.has(300)) {
+        toast.warning('5 minutes remaining!');
+        newWarnings.add(300);
+      }
+      // 2 minutes warning
+      if (remaining <= 120 && !warningsShown.has(120)) {
+        toast.warning('2 minutes remaining!');
+        newWarnings.add(120);
+      }
+      // 1 minute warning
+      if (remaining <= 60 && !warningsShown.has(60)) {
+        toast.error('1 minute remaining! Please submit soon.');
+        newWarnings.add(60);
+      }
+      // 30 seconds warning
+      if (remaining <= 30 && !warningsShown.has(30)) {
+        toast.error('30 seconds remaining!');
+        newWarnings.add(30);
+      }
+      
+      if (newWarnings.size > warningsShown.size) {
+        setWarningsShown(newWarnings);
+      }
     }
-  }, [elapsedTime, quiz]);
+  }, [elapsedTime, quiz, warningsShown]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -180,6 +221,18 @@ export default function QuizTaking() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // Calculate time remaining if there's a time limit
+  const getTimeRemaining = () => {
+    if (!quiz?.time_limit) return null;
+    const totalSeconds = quiz.time_limit * 60;
+    const remaining = totalSeconds - elapsedTime;
+    return Math.max(0, remaining);
+  };
+
+  const timeRemaining = getTimeRemaining();
+  const isTimeRunningOut = timeRemaining !== null && timeRemaining <= 300; // 5 minutes warning
+  const isTimeCritical = timeRemaining !== null && timeRemaining <= 60; // 1 minute critical
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -206,11 +259,17 @@ export default function QuizTaking() {
               <CardTitle>{quiz.title}</CardTitle>
               <CardDescription>{quiz.description}</CardDescription>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span className="font-mono">{formatTime(elapsedTime)}</span>
-              {quiz.time_limit && (
-                <span className="text-xs">/ {quiz.time_limit} min</span>
+            <div className={`flex items-center gap-2 ${isTimeCritical ? 'text-red-600' : isTimeRunningOut ? 'text-orange-600' : 'text-muted-foreground'}`}>
+              <Clock className={`h-4 w-4 ${isTimeCritical || isTimeRunningOut ? 'animate-pulse' : ''}`} />
+              {quiz.time_limit ? (
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-lg">
+                    {formatTime(timeRemaining || 0)}
+                  </span>
+                  <span className="text-xs">remaining</span>
+                </div>
+              ) : (
+                <span className="font-mono">{formatTime(elapsedTime)}</span>
               )}
             </div>
           </div>
@@ -225,10 +284,44 @@ export default function QuizTaking() {
               </span>
             </div>
             <Progress value={progress} />
+            
+            {/* Time Progress Bar */}
+            {quiz.time_limit && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Time Progress</span>
+                  <span>{Math.round((elapsedTime / (quiz.time_limit * 60)) * 100)}% used</span>
+                </div>
+                <Progress 
+                  value={(elapsedTime / (quiz.time_limit * 60)) * 100} 
+                  className={`h-2 ${isTimeCritical ? 'bg-red-100' : isTimeRunningOut ? 'bg-orange-100' : ''}`}
+                />
+              </div>
+            )}
           </div>
 
+          {/* Time Warning Alerts */}
+          {isTimeCritical && (
+            <Alert className="mt-4 border-red-500 bg-red-50 text-red-900">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <AlertTitle>Time Almost Up!</AlertTitle>
+              <AlertDescription>
+                Less than 1 minute remaining. Please submit your answers soon.
+              </AlertDescription>
+            </Alert>
+          )}
+          {isTimeRunningOut && !isTimeCritical && (
+            <Alert className="mt-4 border-orange-500 bg-orange-50 text-orange-900">
+              <AlertTriangle className="h-4 w-4 text-orange-600" />
+              <AlertTitle>Time Running Out</AlertTitle>
+              <AlertDescription>
+                5 minutes remaining. Consider reviewing your answers.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Adaptive Learning Alert - show only on first question */}
-          {currentQuestionIndex === 0 && quiz.quiz_type === 'adaptive' && (
+          {currentQuestionIndex === 0 && quiz.quiz_type === 'adaptive' && !isTimeRunningOut && (
             <Alert className="mt-4">
               <TrendingUp className="h-4 w-4" />
               <AlertTitle>{t('quizTaking.adaptiveLearning')}</AlertTitle>

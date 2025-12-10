@@ -43,7 +43,10 @@ const CreateAssignment: React.FC = () => {
     plagiarism_check_enabled: true,
     is_published: true,
     assignment_type: 'GENERAL',
+    assignment_mode: 'INDIVIDUAL',
     requires_lab_report: false,
+    max_group_size: 4,
+    allow_self_selection: true,
     rubric: '',
     expected_answers: '',
   });
@@ -106,7 +109,10 @@ const CreateAssignment: React.FC = () => {
         plagiarism_check_enabled: formData.plagiarism_check_enabled,
         is_published: formData.is_published,
         assignment_type: formData.requires_lab_report ? 'LAB_REPORT' : 'GENERAL',
+        assignment_mode: formData.assignment_mode,
         requires_lab_report: formData.requires_lab_report,
+        max_group_size: formData.assignment_mode === 'GROUP' ? formData.max_group_size : null,
+        allow_self_selection: formData.assignment_mode === 'GROUP' ? formData.allow_self_selection : null,
         rubric,
         expected_answers,
       };
@@ -325,6 +331,80 @@ const CreateAssignment: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, time_limit: e.target.value })}
                 placeholder={t('common.loading')}
               />
+            </div>
+
+            {/* Assignment Mode */}
+            <div className="space-y-4 pt-4 border-t">
+              <h3 className="font-semibold">Assignment Type</h3>
+              
+              <div>
+                <Label htmlFor="assignment_mode">
+                  Individual or Group Assignment <span className="text-red-500">*</span>
+                </Label>
+                <Select 
+                  value={formData.assignment_mode} 
+                  onValueChange={(value) => setFormData({ ...formData, assignment_mode: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select assignment type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="INDIVIDUAL">
+                      👤 Individual Assignment
+                    </SelectItem>
+                    <SelectItem value="GROUP">
+                      👥 Group Assignment
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-600 mt-1">
+                  {formData.assignment_mode === 'INDIVIDUAL' 
+                    ? "Students work independently on this assignment"
+                    : "Students collaborate in groups to complete this assignment"
+                  }
+                </p>
+              </div>
+
+              {/* Group Settings - Only show for GROUP mode */}
+              {formData.assignment_mode === 'GROUP' && (
+                <div className="space-y-4 p-4 border border-blue-200 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                  <h4 className="font-medium text-blue-800 dark:text-blue-200">Group Assignment Settings</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="max_group_size">Maximum Group Size</Label>
+                      <Input
+                        id="max_group_size"
+                        type="number"
+                        min="2"
+                        max="10"
+                        value={formData.max_group_size}
+                        onChange={(e) => setFormData({ ...formData, max_group_size: parseInt(e.target.value) })}
+                      />
+                      <p className="text-xs text-gray-600 mt-1">How many students can be in each group (2-10)</p>
+                    </div>
+
+                    <div className="flex items-center space-x-2 pt-6">
+                      <Switch
+                        id="allow_self_selection"
+                        checked={formData.allow_self_selection}
+                        onCheckedChange={(checked) => setFormData({ ...formData, allow_self_selection: checked })}
+                      />
+                      <Label htmlFor="allow_self_selection" className="text-sm">
+                        Allow students to form their own groups
+                      </Label>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    💡 Groups will be created automatically when students access this assignment. 
+                    {formData.allow_self_selection 
+                      ? " Students can create and join groups themselves."
+                      : " You will need to manually assign students to groups."
+                    }
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* AI Grading Configuration */}

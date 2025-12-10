@@ -44,6 +44,8 @@ const CreateAssignment: React.FC = () => {
     is_published: true,
     assignment_type: 'GENERAL',
     requires_lab_report: false,
+    rubric: '',
+    expected_answers: '',
   });
 
   useEffect(() => {
@@ -70,6 +72,28 @@ const CreateAssignment: React.FC = () => {
     setLoading(true);
 
     try {
+      // Parse JSON fields if they contain data
+      let rubric = null;
+      let expected_answers = null;
+      
+      if (formData.rubric.trim()) {
+        try {
+          rubric = JSON.parse(formData.rubric);
+        } catch (e) {
+          toast.error('Invalid JSON format in rubric field');
+          return;
+        }
+      }
+      
+      if (formData.expected_answers.trim()) {
+        try {
+          expected_answers = JSON.parse(formData.expected_answers);
+        } catch (e) {
+          toast.error('Invalid JSON format in expected answers field');
+          return;
+        }
+      }
+
       const payload = {
         title: formData.title,
         description: formData.description || null,
@@ -83,6 +107,8 @@ const CreateAssignment: React.FC = () => {
         is_published: formData.is_published,
         assignment_type: formData.requires_lab_report ? 'LAB_REPORT' : 'GENERAL',
         requires_lab_report: formData.requires_lab_report,
+        rubric,
+        expected_answers,
       };
 
       await api.post('/assignments/', payload);
@@ -279,6 +305,47 @@ const CreateAssignment: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, time_limit: e.target.value })}
                 placeholder={t('common.loading')}
               />
+            </div>
+
+            {/* AI Grading Configuration */}
+            <div className="space-y-4 pt-4 border-t">
+              <h3 className="font-semibold">AI Grading Configuration</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="rubric">
+                  Grading Rubric (JSON)
+                  <span className="text-sm text-gray-500 ml-1">(Optional)</span>
+                </Label>
+                <Textarea
+                  id="rubric"
+                  value={formData.rubric}
+                  onChange={(e) => setFormData({ ...formData, rubric: e.target.value })}
+                  placeholder='Example: {"criteria": {"understanding": {"weight": 0.3, "description": "Demonstrates understanding of concepts"}, "accuracy": {"weight": 0.4, "description": "Correctness of solutions"}, "presentation": {"weight": 0.3, "description": "Clear and organized presentation"}}}'
+                  rows={4}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-gray-600">
+                  Define specific criteria for AI grading. Use JSON format with criteria weights and descriptions.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="expected_answers">
+                  Expected Answers/Reference Solutions (JSON)
+                  <span className="text-sm text-gray-500 ml-1">(Optional)</span>
+                </Label>
+                <Textarea
+                  id="expected_answers"
+                  value={formData.expected_answers}
+                  onChange={(e) => setFormData({ ...formData, expected_answers: e.target.value })}
+                  placeholder='Example: {"question_1": {"answer": "V = IR", "explanation": "Ohms Law relates voltage, current, and resistance"}, "question_2": {"answer": "12V", "calculation": "V = 2A × 6Ω = 12V"}}'
+                  rows={4}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-gray-600">
+                  Provide model answers or reference solutions for AI grading comparison.
+                </p>
+              </div>
             </div>
 
             {/* Settings */}

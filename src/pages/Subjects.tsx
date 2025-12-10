@@ -35,7 +35,7 @@ const categoryInfo = {
 };
 
 export default function Subjects() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<string>('core_eee');
   const [enrolledCourses, setEnrolledCourses] = useState<Set<number>>(new Set());
   const [enrollingCourses, setEnrollingCourses] = useState<Set<number>>(new Set());
@@ -46,8 +46,8 @@ export default function Subjects() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Use cached query - instant load on subsequent visits
-  const { data, isLoading, error } = useSubjects();
+  // Use cached query - instant load on subsequent visits, filtered by current language
+  const { data, isLoading, error } = useSubjects(i18n.language);
   const updateSubjectMutation = useUpdateSubject();
 
   // Fetch user's enrollments and chapter completion status

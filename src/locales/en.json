@@ -49,6 +49,7 @@
     "aiAssistant": "AI Assistant",
     "assignments": "Assignments",
     "exams": "Exams",
+    "examManagement": "Exam Management",
     "analytics": "Analytics",
     "uploadResource": "Upload Resource",
     "createAssignment": "Create Assignment",
@@ -60,7 +61,8 @@
     "aiLessonPlanner": "AI Lesson Planner",
     "myLessons": "My Lessons",
     "userManagement": "User Management",
-    "ragTest": "RAG Test"
+    "ragTest": "RAG Test",
+    "resourceLibrary": "Resource Library"
   },
   "auth": {
     "signIn": "Sign In",

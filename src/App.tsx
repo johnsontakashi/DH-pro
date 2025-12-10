@@ -50,6 +50,8 @@ import StudentFeedback from "./pages/StudentFeedback";
 import MyLessons from "./pages/MyLessons";
 import ChapterResources from "./pages/ChapterResources";
 import ResourceLibrary from "./pages/ResourceLibrary";
+import ExamSubmissions from "./pages/ExamSubmissions";
+import TeacherExams from "./pages/TeacherExams";
 import NotFound from "./pages/NotFound";
 
 // Protected Route Component
@@ -230,6 +232,18 @@ const AppRoutes = () => (
     <Route path="/exam-results/:attemptId" element={
       <ProtectedRoute requiredRole="student">
         <ExamResults />
+      </ProtectedRoute>
+    } />
+
+    <Route path="/exam-submissions/:examId" element={
+      <ProtectedRoute requiredRole="teacher">
+        <ExamSubmissions />
+      </ProtectedRoute>
+    } />
+
+    <Route path="/teacher/exams" element={
+      <ProtectedRoute requiredRole="teacher">
+        <TeacherExams />
       </ProtectedRoute>
     } />
 

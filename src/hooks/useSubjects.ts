@@ -18,6 +18,7 @@ export interface Subject {
   category: 'core_eee' | 'supporting' | 'secondary_soft_skills';
   description: string;
   icon: string;
+  language?: string;
   chapters: Chapter[];
 }
 
@@ -35,13 +36,18 @@ interface SubjectsResponse {
  * - Shared cache across all components
  * - Loading and error states management
  *
+ * @param language - Optional language filter (e.g., 'en', 'fr')
  * @returns Query object with subjects data, loading state, and error
  */
-export const useSubjects = () => {
+export const useSubjects = (language?: string) => {
   return useQuery({
-    queryKey: ['subjects'],
+    queryKey: ['subjects', language],
     queryFn: async () => {
-      const response = await api.get<SubjectsResponse>('/subjects');
+      const params = new URLSearchParams();
+      if (language) {
+        params.append('language', language);
+      }
+      const response = await api.get<SubjectsResponse>(`/subjects?${params.toString()}`);
       return response.data;
     },
     // Cache for 10 minutes (data doesn't change frequently)
@@ -54,8 +60,8 @@ export const useSubjects = () => {
 /**
  * Get subjects filtered by category from cached data
  */
-export const useSubjectsByCategory = (category: string) => {
-  const { data, isLoading, error } = useSubjects();
+export const useSubjectsByCategory = (category: string, language?: string) => {
+  const { data, isLoading, error } = useSubjects(language);
 
   const filteredSubjects = data?.subjects.filter(
     subject => subject.category === category

@@ -49,6 +49,7 @@
     "aiAssistant": "Assistant IA",
     "assignments": "Devoirs",
     "exams": "Examens",
+    "examManagement": "Gestion des examens",
     "analytics": "Analytique",
     "uploadResource": "Télécharger une ressource",
     "createAssignment": "Créer un devoir",
@@ -60,7 +61,8 @@
     "aiLessonPlanner": "Planificateur de leçons IA",
     "myLessons": "Mes leçons",
     "userManagement": "Gestion des utilisateurs",
-    "ragTest": "Test RAG"
+    "ragTest": "Test RAG",
+    "resourceLibrary": "Bibliothèque de ressources"
   },
   "auth": {
     "signIn": "Se connecter",

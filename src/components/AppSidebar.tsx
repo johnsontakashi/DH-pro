@@ -21,7 +21,8 @@ import {
   Layers,
   MessagesSquare,
   History,
-  Library
+  Library,
+  Shield
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -74,6 +75,7 @@ export function AppSidebar() {
     { titleKey: "nav.resourceLibrary", url: "/resources", icon: Library },
     { titleKey: "nav.assignments", url: "/assignments", icon: Clipboard },
     // { titleKey: "nav.labReports", url: "/lab-reports", icon: TestTube },
+    { titleKey: "nav.examManagement", url: "/teacher/exams", icon: Shield },
     { titleKey: "nav.contentCreator", url: "/teacher/content-creator", icon: Layers },
     { titleKey: "nav.uploadResource", url: "/upload-resource", icon: Upload },
     { titleKey: "nav.analytics", url: "/teacher/analytics", icon: BarChart3 },

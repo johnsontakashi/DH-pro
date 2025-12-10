@@ -15,7 +15,8 @@ import {
   Trash2,
   RefreshCw,
   BookOpen,
-  TrendingUp
+  TrendingUp,
+  FileCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/services/api';
@@ -141,6 +142,30 @@ const FlashcardManager = () => {
     }
   };
 
+  const handleConvertFromQuestions = async () => {
+    if (!selectedChapter) {
+      toast.error('Please select a chapter first');
+      return;
+    }
+
+    try {
+      setGenerating(true);
+
+      const response = await api.post(`/flashcards/convert-from-questions/${selectedChapter}`, {
+        num_flashcards: numCards,
+        overwrite: false
+      });
+
+      toast.success(`Converted ${response.data.length} questions to flashcards!`);
+      loadFlashcards(selectedChapter);
+    } catch (error: any) {
+      console.error('Error converting questions:', error);
+      toast.error(error.response?.data?.detail || 'Failed to convert questions to flashcards');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const handleCreateFlashcard = async () => {
     if (!selectedChapter || !frontText || !backText) {
       toast.error('Please fill in all required fields');
@@ -258,10 +283,14 @@ const FlashcardManager = () => {
 
       {selectedChapter && (
         <Tabs defaultValue="generate" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="generate">
               <Sparkles className="mr-2 h-4 w-4" />
               AI Generate
+            </TabsTrigger>
+            <TabsTrigger value="convert">
+              <FileCheck className="mr-2 h-4 w-4" />
+              Convert from Questions
             </TabsTrigger>
             <TabsTrigger value="manual">
               <Plus className="mr-2 h-4 w-4" />
@@ -307,6 +336,74 @@ const FlashcardManager = () => {
                     <>
                       <Sparkles className="mr-2 h-4 w-4" />
                       Generate Flashcards
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="convert">
+            <Card>
+              <CardHeader>
+                <CardTitle>Convert Questions to Flashcards</CardTitle>
+                <CardDescription>
+                  Transform existing MCQ questions into flashcards instantly. Perfect for leveraging your question bank!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200">
+                  <div className="flex items-start space-x-3">
+                    <Brain className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100">How it works:</h4>
+                      <ul className="text-sm text-blue-800 dark:text-blue-200 mt-1 space-y-1">
+                        <li>• Question text becomes the flashcard front</li>
+                        <li>• Correct answer becomes the flashcard back</li>
+                        <li>• Explanation is preserved for deeper learning</li>
+                        <li>• Difficulty levels are automatically mapped</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Number of Flashcards to Create</Label>
+                  <Input
+                    type="number"
+                    value={numCards}
+                    onChange={(e) => setNumCards(parseInt(e.target.value))}
+                    min={5}
+                    max={50}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Will convert random questions from this chapter
+                  </p>
+                </div>
+
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    <strong>Note:</strong> This requires existing questions in the selected chapter. 
+                    If no questions are available, generate questions first using the Question Generator.
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleConvertFromQuestions}
+                  disabled={generating}
+                  className="w-full"
+                  size="lg"
+                  variant="outline"
+                >
+                  {generating ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Converting...
+                    </>
+                  ) : (
+                    <>
+                      <FileCheck className="mr-2 h-4 w-4" />
+                      Convert Questions to Flashcards
                     </>
                   )}
                 </Button>

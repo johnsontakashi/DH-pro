@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { 
   AlertTriangle, 
@@ -16,10 +20,14 @@ import {
   User, 
   Shield,
   Flag,
-  TrendingUp
+  TrendingUp,
+  Edit,
+  Save,
+  X
 } from "lucide-react";
 import api from "@/lib/axios";
 import { formatDistanceToNow } from "date-fns";
+import { formatScoreAs20 } from "@/utils/scoreUtils";
 
 interface ExamSubmission {
   attempt_id: number;
@@ -54,6 +62,14 @@ export default function ExamSubmissions() {
   const [data, setData] = useState<ExamSubmissionsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
+  
+  // Grade editing state
+  const [isGradeDialogOpen, setIsGradeDialogOpen] = useState(false);
+  const [editingSubmission, setEditingSubmission] = useState<ExamSubmission | null>(null);
+  const [newScore, setNewScore] = useState("");
+  const [newPercentage, setNewPercentage] = useState("");
+  const [gradingFeedback, setGradingFeedback] = useState("");
+  const [isUpdatingGrade, setIsUpdatingGrade] = useState(false);
 
   useEffect(() => {
     fetchExamSubmissions();
@@ -118,6 +134,66 @@ export default function ExamSubmissions() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const openGradeDialog = (submission: ExamSubmission) => {
+    setEditingSubmission(submission);
+    setNewScore(submission.score?.toString() || "");
+    setNewPercentage(submission.percentage?.toString() || "");
+    setGradingFeedback("");
+    setIsGradeDialogOpen(true);
+  };
+
+  const closeGradeDialog = () => {
+    setIsGradeDialogOpen(false);
+    setEditingSubmission(null);
+    setNewScore("");
+    setNewPercentage("");
+    setGradingFeedback("");
+  };
+
+  const handleGradeUpdate = async () => {
+    if (!editingSubmission) return;
+
+    const score = parseFloat(newScore);
+    const percentage = parseFloat(newPercentage);
+
+    if (isNaN(score) || isNaN(percentage)) {
+      toast.error("Please enter valid numbers for score and percentage");
+      return;
+    }
+
+    if (percentage < 0 || percentage > 100) {
+      toast.error("Percentage must be between 0 and 100");
+      return;
+    }
+
+    setIsUpdatingGrade(true);
+
+    try {
+      const response = await api.put(`/exams/attempts/${editingSubmission.attempt_id}/grade`, {
+        score,
+        percentage,
+        feedback: gradingFeedback || null
+      });
+
+      // Update the submission in the data
+      if (data) {
+        const updatedSubmissions = data.submissions.map(sub => 
+          sub.attempt_id === editingSubmission.attempt_id 
+            ? { ...sub, score, percentage, passed: percentage >= (data?.exam_type === 'final' ? 60 : 50) }
+            : sub
+        );
+        setData({ ...data, submissions: updatedSubmissions });
+      }
+
+      toast.success("Grade updated successfully");
+      closeGradeDialog();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to update grade");
+    } finally {
+      setIsUpdatingGrade(false);
+    }
   };
 
   const filteredSubmissions = data?.submissions.filter(submission => {
@@ -259,14 +335,24 @@ export default function ExamSubmissions() {
                       </CardTitle>
                       <CardDescription>{submission.student_email}</CardDescription>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate(`/exam-results/${submission.attempt_id}`)}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Details
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => openGradeDialog(submission)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Grade
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/exam-results/${submission.attempt_id}`)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
 
@@ -275,7 +361,7 @@ export default function ExamSubmissions() {
                     <div>
                       <span className="text-muted-foreground">Score: </span>
                       <span className="font-semibold">
-                        {submission.percentage ? `${submission.percentage.toFixed(1)}%` : 'N/A'}
+                        {submission.percentage ? formatScoreAs20(submission.percentage) : 'N/A'}
                       </span>
                     </div>
                     <div>
@@ -340,6 +426,75 @@ export default function ExamSubmissions() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Grade Edit Dialog */}
+      <Dialog open={isGradeDialogOpen} onOpenChange={setIsGradeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Grade</DialogTitle>
+            <DialogDescription>
+              Update the grade for {editingSubmission?.student_name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="score">Score (Points)</Label>
+                <Input
+                  id="score"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={newScore}
+                  onChange={(e) => setNewScore(e.target.value)}
+                  placeholder="85"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="percentage">Percentage (%)</Label>
+                <Input
+                  id="percentage"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="100"
+                  value={newPercentage}
+                  onChange={(e) => setNewPercentage(e.target.value)}
+                  placeholder="85.5"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="feedback">Additional Feedback (Optional)</Label>
+              <Textarea
+                id="feedback"
+                value={gradingFeedback}
+                onChange={(e) => setGradingFeedback(e.target.value)}
+                placeholder="Add any feedback for the student..."
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={closeGradeDialog} disabled={isUpdatingGrade}>
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button onClick={handleGradeUpdate} disabled={isUpdatingGrade}>
+              {isUpdatingGrade ? (
+                <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isUpdatingGrade ? "Updating..." : "Save Grade"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -22,6 +22,7 @@ import api from '@/services/api';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { formatScoreAs20 } from '@/utils/scoreUtils';
 
 interface Assignment {
   id: number;
@@ -138,7 +139,7 @@ const Assignments: React.FC = () => {
                   submission?.grade !== null ? (
                     <Badge className="bg-green-500">
                       <Award className="w-3 h-3 mr-1" />
-                      {t('assignments.graded')}: {submission.grade}/{assignment.max_score}
+                      {t('assignments.graded')}: {formatScoreAs20((submission.grade / assignment.max_score) * 100)}
                     </Badge>
                   ) : (
                     <Badge className="bg-blue-500">
